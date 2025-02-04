@@ -1,0 +1,62 @@
+// Dashboard.js
+import React from "react";
+import PropTypes from "prop-types";
+import { useSpring, animated } from "@react-spring/web";
+
+const Dashboard = ({ totalSales = 0, topPerformer = null, todaysSales = 0, theme }) => {
+  const fadeIn = useSpring({
+    opacity: 1,
+    from: { opacity: 0 },
+    config: { duration: 1000 },
+  });
+
+  const cardStyle = {
+    backgroundColor: theme === "light" ? "#FFFFFF" : "#0A0A0A",
+    color: theme === "light" ? "#000000" : "#FFFFFF",
+  };
+
+  return (
+    <animated.div
+      style={fadeIn}
+      className="grid grid-cols-1 md:grid-cols-3 w-full gap-8"
+    >
+      {/* Today's Sales */}
+      <div style={cardStyle} className="p-8 rounded-lg hover:shadow-lg font-bold">
+        <h2 className="text-2xl mb-2">Today's Sales</h2>
+        <p className="text-4xl">${todaysSales.toFixed(2)}</p>
+      </div>
+
+      {/* Total Sales */}
+      <div style={cardStyle} className="p-8 rounded-lg hover:shadow-lg font-bold">
+        <h2 className="text-2xl mb-2">Total Sales</h2>
+        <p className="text-4xl">${totalSales.toFixed(2)}</p>
+      </div>
+
+      {/* Top Performer */}
+      <div style={cardStyle} className="p-8 rounded-lg hover:shadow-lg font-bold">
+        <h2 className="text-2xl mb-2">Top Performer</h2>
+        {topPerformer ? (
+          <>
+            <p className="text-lg">
+              <strong>Name:</strong> {topPerformer.name}
+            </p>
+            <p className="text-lg">
+              <strong>Sales:</strong> ${topPerformer.totalSales.toFixed(2)}
+            </p>
+          </>
+        ) : (
+          <p className="text-lg">No top performer found</p>
+        )}
+      </div>
+    </animated.div>
+  );
+};
+
+Dashboard.propTypes = {
+  totalSales: PropTypes.number,
+  topPerformer: PropTypes.object,
+  todaysSales: PropTypes.number,
+  theme: PropTypes.string.isRequired,
+};
+
+export default Dashboard;

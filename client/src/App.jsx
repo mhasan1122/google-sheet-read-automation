@@ -16,17 +16,22 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/sheet-data`
-        );
-        console.log("API Response:", response.data); // Log the API response
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/sheet-data`);
         setData(response.data);
       } catch (error) {
         console.error(error);
       }
     };
-    fetchData();
+  
+    fetchData(); // Initial fetch
+  
+    const interval = setInterval(() => {
+      fetchData(); // Fetch data every 3 seconds
+    }, 4000);
+  
+    return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
+  
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");

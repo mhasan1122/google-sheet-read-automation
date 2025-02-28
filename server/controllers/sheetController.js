@@ -69,7 +69,7 @@ const getSheetData = async (req, res) => {
 
     // Fix Today's Sales Calculation
     const today = moment().startOf('day').format('YYYY-MM-DD');
-    console.log('Today (Expected Format):', today);
+    // console.log('Today (Expected Format):', today);
 
     const todaysSales = filteredData
       .filter(row => {
@@ -85,12 +85,12 @@ const getSheetData = async (req, res) => {
           .startOf('day')
           .format('YYYY-MM-DD');
 
-        console.log(`Row Date: ${rowDate} | Formatted: ${formattedRowDate} | Match: ${formattedRowDate === today}`);
+        // console.log(`Row Date: ${rowDate} | Formatted: ${formattedRowDate} | Match: ${formattedRowDate === today}`);
         return formattedRowDate === today;
       })
       .reduce((sum, row) => sum + parseFloat((row[headers.indexOf('Amount')] || '0').replace(/[$,]/g, '')), 0);
 
-    console.log("Final Calculated Today's Sales:", todaysSales);
+    // console.log("Final Calculated Today's Sales:", todaysSales);
 
     res.json({
       employees: employees.length > 0 ? employees : [],
@@ -105,4 +105,3 @@ const getSheetData = async (req, res) => {
 };
 
 module.exports = { getSheetData };
-

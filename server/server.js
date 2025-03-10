@@ -80,7 +80,7 @@ const pollSheetData = async () => {
       const amount = parseFloat(
         (row[headers.indexOf("Deli _amount")] || "0").replace(/[$,]/g, "")
       );
-      const deliDate = row[headers.indexOf("Deli_Date")] || "No Date";
+      const deliDate = row[headers.indexOf("Date")] || "No Date";
 
       if (!groupedByEmployee[id]) {
         groupedByEmployee[id] = {
@@ -103,9 +103,9 @@ const pollSheetData = async () => {
     console.log("Today’s date for comparison:", today);
     const todaysSales = filteredData
       .filter((row) => {
-        const deliDate = row[headers.indexOf("Deli_Date")];
+        const deliDate = row[headers.indexOf("Date")];
         if (!deliDate) {
-          console.log(`Row skipped (no Deli_Date): ${row}`);
+          console.log(`Row skipped (no Date): ${row}`);
           return false;
         }
 
@@ -116,12 +116,12 @@ const pollSheetData = async () => {
         );
 
         if (!formattedDeliDate.isValid()) {
-          console.log(`Invalid date format for Deli_Date: ${deliDate}`);
+          console.log(`Invalid date format for Date: ${deliDate}`);
           return false;
         }
 
         const formattedDateStr = formattedDeliDate.startOf("day").format("YYYY-MM-DD");
-        console.log(`Comparing Deli_Date: ${deliDate} -> ${formattedDateStr} vs Today: ${today}`);
+        console.log(`Comparing Date: ${deliDate} -> ${formattedDateStr} vs Today: ${today}`);
         const isToday = formattedDateStr === today;
         if (isToday) {
           console.log(`Match found for today: ${row}`);
@@ -146,7 +146,7 @@ const pollSheetData = async () => {
     console.log("Current month range:", currentMonthStart, "to", currentMonthEnd);
     const monthlySales = filteredData
       .filter((row) => {
-        const deliDate = row[headers.indexOf("Deli_Date")];
+        const deliDate = row[headers.indexOf("Date")];
         if (!deliDate) return false;
 
         const formattedDeliDate = moment(

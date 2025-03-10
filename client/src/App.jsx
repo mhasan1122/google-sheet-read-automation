@@ -36,7 +36,7 @@ const App = () => {
         prevEmployeeIds.some((id, index) => id !== newEmployeeIds[index])
       ) {
         setShowSalesPopup(true);
-        setTimeout(() => setShowSalesPopup(false), 2000); // Show for 2 seconds
+        setTimeout(() => setShowSalesPopup(false), 1000); // Show for 2 seconds
       }
 
       setPrevEmployees(currentEmployees);
@@ -48,8 +48,8 @@ const App = () => {
     const socket = io(import.meta.env.VITE_BACKEND_URL.replace("/api", ""), {
       reconnection: true,
       reconnectionAttempts: 10,
-      reconnectionDelay: 500,
-      timeout: 2000,
+      reconnectionDelay: 300,
+      timeout: 1000,
     });
 
     socket.on("sheet-data-update", handleSocketData);
@@ -78,7 +78,7 @@ const App = () => {
         newAudio.pause();
         newAudio.currentTime = 0;
         setAudio(null);
-      }, 4000); // 4 seconds
+      }, 2000); // 4 seconds
     }, 15000); // Every 15 seconds
 
     return () => {

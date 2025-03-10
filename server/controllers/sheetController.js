@@ -74,9 +74,9 @@ const getSheetData = async (req, res) => {
     console.log("Today’s date for API comparison:", today);
     const todaysSales = filteredData
       .filter((row) => {
-        const deliDate = row[headers.indexOf("Deli_Date")];
+        const deliDate = row[headers.indexOf("Date")];
         if (!deliDate) {
-          console.log(`API Row skipped (no Deli_Date): ${row}`);
+          console.log(`API Row skipped (no Date): ${row}`);
           return false;
         }
 
@@ -87,12 +87,12 @@ const getSheetData = async (req, res) => {
         );
 
         if (!formattedDeliDate.isValid()) {
-          console.log(`API Invalid date format for Deli_Date: ${deliDate}`);
+          console.log(`API Invalid date format for Date: ${deliDate}`);
           return false;
         }
 
         const formattedDateStr = formattedDeliDate.startOf("day").format("YYYY-MM-DD");
-        console.log(`API Comparing Deli_Date: ${deliDate} -> ${formattedDateStr} vs Today: ${today}`);
+        console.log(`API Comparing Date: ${deliDate} -> ${formattedDateStr} vs Today: ${today}`);
         const isToday = formattedDateStr === today;
         if (isToday) {
           console.log(`API Match found for today: ${row}`);
@@ -114,7 +114,7 @@ const getSheetData = async (req, res) => {
     const currentMonthEnd = moment().endOf("month").format("YYYY-MM-DD");
     const monthlySales = filteredData
       .filter((row) => {
-        const deliDate = row[headers.indexOf("Deli_Date")];
+        const deliDate = row[headers.indexOf("Date")];
         if (!deliDate) return false; // Fixed syntax here
 
         const formattedDeliDate = moment(

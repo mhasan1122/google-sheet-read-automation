@@ -28,7 +28,7 @@ const Dashboard = ({ totalSales = 0, topPerformer = null, todaysSales = 0, theme
     : null;
 
   return (
-    <animated.div style={fadeIn} className="grid grid-cols-1 md:grid-cols-3 w-full gap-8">
+    <animated.div style={fadeIn} className="grid grid-cols-1 md:grid-cols-3 w-full gap-8 ">
       {/* Today's Sales */}
       <div style={cardStyle} className="p-8 rounded-lg hover:shadow-lg font-bold">
         <h2 className="text-2xl mb-2">Today's Sales</h2>

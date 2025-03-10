@@ -1,5 +1,6 @@
 import React from "react";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo2.png";
+import { Button } from "./button";
 
 const Navbar = ({ searchTerm, setSearchTerm, toggleTheme, theme }) => {
   return (
@@ -11,7 +12,7 @@ const Navbar = ({ searchTerm, setSearchTerm, toggleTheme, theme }) => {
       } p-4 flex justify-between items-center`}
     >
       <div className="flex items-center space-x-2 mr-10">
-        <img src={logo} alt="Logo" className="w-44 h-14" />
+        <div className=" h-10  flex justify-center items-center"><img src={logo} alt="Logo" className="w-[250px] h-[200px]" /></div>
         <h1
           className={`text-xl font-bold ${
             theme === "light" ? "text-black" : "text-white"
@@ -21,13 +22,14 @@ const Navbar = ({ searchTerm, setSearchTerm, toggleTheme, theme }) => {
         </h1>
       </div>
 
+      <div className="flex items-center space-x-4">
       <div className="relative flex items-center">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search Employees"
-          className={`p-2 rounded-lg border-2 focus:outline-none ${
+          className={`p-2 h-10 rounded-[8px] border-[1px] border-gray-600 focus:outline-none ${
             theme === "light"
               ? "border-black focus:ring-black"
               : "border-white focus:ring-white"
@@ -42,7 +44,7 @@ const Navbar = ({ searchTerm, setSearchTerm, toggleTheme, theme }) => {
         </span>
       </div>
 
-      <button
+      {/* <button
         onClick={toggleTheme}
         className={`px-4 py-2 rounded-lg transition duration-300 ${
           theme === "light"
@@ -51,7 +53,12 @@ const Navbar = ({ searchTerm, setSearchTerm, toggleTheme, theme }) => {
         }`}
       >
         {theme === "light" ? "Dark Mode" : "Light Mode"}
-      </button>
+      </button> */}
+
+      <Button variant="outline" onClick={toggleTheme}>
+      {theme === "light" ? "Dark Mode" : "Light Mode"}
+      </Button>
+      </div>
     </nav>
   );
 };

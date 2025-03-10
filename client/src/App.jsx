@@ -6,13 +6,16 @@ import SalesData from "./components/SalesData";
 import WaveSpinner from "./components/WaveSpinner";
 import Calendar from "./components/Calendar";
 import DigitalWatch from "./components/DigitalWatch";
+import party from "party-js"; // Import party-js
 
 const App = () => {
   const [data, setData] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [theme, setTheme] = useState("light");
-  const [showPopup, setShowPopup] = useState(false);
+  const [showImagePopup, setShowImagePopup] = useState(false);
+  const [showSalesPopup, setShowSalesPopup] = useState(false);
   const [audio, setAudio] = useState(null);
+  const [prevEmployees, setPrevEmployees] = useState([]);
 
   // List of MP3 URLs
   const mp3Urls = [
@@ -23,7 +26,22 @@ const App = () => {
 
   const handleSocketData = useCallback((newData) => {
     console.log("Received sheet data update:", newData);
-    setData(newData);
+    setData((prevData) => {
+      const currentEmployees = newData.employees || [];
+      const prevEmployeeIds = (prevData?.employees || []).map((emp) => emp.id);
+      const newEmployeeIds = currentEmployees.map((emp) => emp.id);
+
+      if (
+        prevEmployeeIds.length < newEmployeeIds.length ||
+        prevEmployeeIds.some((id, index) => id !== newEmployeeIds[index])
+      ) {
+        setShowSalesPopup(true);
+        setTimeout(() => setShowSalesPopup(false), 2000); // Show for 2 seconds
+      }
+
+      setPrevEmployees(currentEmployees);
+      return newData;
+    });
   }, []);
 
   useEffect(() => {
@@ -44,27 +62,24 @@ const App = () => {
       console.log("Socket connected successfully");
     });
 
-    // Popup and audio logic: Show every 5 seconds, hide after 3 seconds
+    // Image popup and audio logic: Show every 15 seconds, hide after 4 seconds
     const popupInterval = setInterval(() => {
-      // Randomly select an MP3
       const randomMp3 = mp3Urls[Math.floor(Math.random() * mp3Urls.length)];
       const newAudio = new Audio(randomMp3);
       setAudio(newAudio);
 
-      // Show popup and play audio
-      setShowPopup(true);
+      setShowImagePopup(true);
       newAudio.play().catch((error) => {
         console.error("Error playing audio:", error);
       });
 
-      // Hide popup and stop audio after 3 seconds
       setTimeout(() => {
-        setShowPopup(false);
+        setShowImagePopup(false);
         newAudio.pause();
-        newAudio.currentTime = 0; // Reset audio to start
+        newAudio.currentTime = 0;
         setAudio(null);
-      }, 3000); // 3 seconds
-    }, 5000); // Show every 5 seconds (5000ms)
+      }, 4000); // 4 seconds
+    }, 15000); // Every 15 seconds
 
     return () => {
       socket.disconnect();
@@ -76,6 +91,19 @@ const App = () => {
       console.log("Socket disconnected");
     };
   }, [handleSocketData]);
+
+  // Effect to trigger confetti when sales popup shows
+  useEffect(() => {
+    if (showSalesPopup) {
+      // Trigger confetti from the center of the screen
+      party.confetti(document.body, {
+        count: party.variation.range(50, 100), // Number of confetti particles
+        size: party.variation.range(0.8, 1.2), // Size variation
+        spread: 70, // Spread of confetti
+        speed: 500, // Speed of falling
+      });
+    }
+  }, [showSalesPopup]);
 
   const toggleTheme = useCallback(() => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
@@ -130,7 +158,7 @@ const App = () => {
           </div>
         </div>
 
-        <div className={`${filteredEmployees.length > 5 ? "md:scale-90" : ""}`}>
+        <div className={`${filteredEmployees.length > 5 ? "" : ""} w-full`}>
           <Dashboard
             totalSales={
               data?.employees?.reduce(
@@ -144,12 +172,12 @@ const App = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-8 gap-8 mt-8">
+          <div className="md:col-span-5">
             <SalesData employees={filteredEmployees} theme={theme} />
           </div>
 
-          <div className={`${filteredEmployees.length > 5 ? "md:scale-90" : ""}`}>
+          <div className={`${filteredEmployees.length > 5 ? "" : ""} md:col-span-3`}>
             <h2 className="text-2xl font-bold mb-4">Team Sales</h2>
             <div className="grid grid-cols-1 gap-4">
               <div
@@ -186,8 +214,8 @@ const App = () => {
         Made by FSD TEAM
       </footer>
 
-      {/* Popup with Image (No Animation) */}
-      {showPopup && (
+      {/* Image Popup with Audio (Every 15 seconds) */}
+      {showImagePopup && (
         <div
           style={{
             position: "fixed",
@@ -208,6 +236,67 @@ const App = () => {
           />
         </div>
       )}
+
+      {/* Sales Popup Modal with Happy Emoji and Confetti */}
+      {showSalesPopup && (
+        <div
+          style={{
+            position: "fixed",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent overlay
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 30,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: theme === "light" ? "#FFFFFF" : "#1C263E",
+              padding: "30px",
+              borderRadius: "12px",
+              boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+              animation: "fadeInScale 0.5s ease-in-out",
+              textAlign: "center",
+              height: "200px",
+              width: "400px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "28px",
+                fontWeight: "bold",
+                color: theme === "light" ? "#000000" : "#FFFFFF",
+                margin: "0",
+              }}
+            >
+              WOW! Keep it UP 😊
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Inline CSS for Animation */}
+      <style>
+        {`
+          @keyframes fadeInScale {
+            0% {
+              opacity: 0;
+              transform: scale(0.8);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };

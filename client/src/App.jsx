@@ -12,6 +12,14 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [theme, setTheme] = useState("light");
   const [showPopup, setShowPopup] = useState(false);
+  const [audio, setAudio] = useState(null);
+
+  // List of MP3 URLs
+  const mp3Urls = [
+    "https://res.cloudinary.com/dnk7d03vr/video/upload/v1741593847/mp3/work2.mp3",
+    "https://res.cloudinary.com/dnk7d03vr/video/upload/v1741593908/mp3/screenshot.mp3",
+    "https://res.cloudinary.com/dnk7d03vr/video/upload/v1741593794/mp3/for%20work.mp3",
+  ];
 
   const handleSocketData = useCallback((newData) => {
     console.log("Received sheet data update:", newData);
@@ -36,15 +44,35 @@ const App = () => {
       console.log("Socket connected successfully");
     });
 
-    // Popup logic: Show every 5 seconds, hide after 2 seconds
+    // Popup and audio logic: Show every 5 seconds, hide after 3 seconds
     const popupInterval = setInterval(() => {
+      // Randomly select an MP3
+      const randomMp3 = mp3Urls[Math.floor(Math.random() * mp3Urls.length)];
+      const newAudio = new Audio(randomMp3);
+      setAudio(newAudio);
+
+      // Show popup and play audio
       setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 2000); // Hide after 2 seconds
+      newAudio.play().catch((error) => {
+        console.error("Error playing audio:", error);
+      });
+
+      // Hide popup and stop audio after 3 seconds
+      setTimeout(() => {
+        setShowPopup(false);
+        newAudio.pause();
+        newAudio.currentTime = 0; // Reset audio to start
+        setAudio(null);
+      }, 3000); // 3 seconds
     }, 5000); // Show every 5 seconds (5000ms)
 
     return () => {
       socket.disconnect();
       clearInterval(popupInterval);
+      if (audio) {
+        audio.pause();
+        setAudio(null);
+      }
       console.log("Socket disconnected");
     };
   }, [handleSocketData]);
@@ -117,7 +145,6 @@ const App = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          {/* Removed max-h and overflow from SalesData */}
           <div>
             <SalesData employees={filteredEmployees} theme={theme} />
           </div>
@@ -177,7 +204,7 @@ const App = () => {
           <img
             src="https://res.cloudinary.com/dnk7d03vr/image/upload/v1741536446/amirul%20bhai.jpg"
             alt="Popup Image"
-            style={{ width: "600px", height: "400px" }} // Consider 200px for visibility
+            style={{ width: "600px", height: "400px" }}
           />
         </div>
       )}

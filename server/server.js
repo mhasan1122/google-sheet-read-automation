@@ -199,7 +199,7 @@ const pollSheetData = async () => {
         const serviceLine = row[headers.indexOf("Service Line")] || "";
         const isDM = !serviceLine.toLowerCase().includes("website development");
         if (isDM) {
-          console.log(`Counting for dmSales: ${row}`);
+          // console.log(`Counting for dmSales: ${row}`);
         }
         return isDM;
       })
@@ -213,7 +213,7 @@ const pollSheetData = async () => {
         },
         0
       );
-    console.log("DM Sales calculated:", dmSales);
+    // console.log("DM Sales calculated:", dmSales);
 
     const currentData = {
       employees: employees.length > 0 ? employees : [],

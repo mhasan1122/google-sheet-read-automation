@@ -163,7 +163,7 @@ const getSheetData = async (req, res) => {
         const serviceLine = row[headers.indexOf("Service Line")] || "";
         const isDM = !serviceLine.toLowerCase().includes("website development");
         if (isDM) {
-          console.log(`API Counting for dmSales: ${row}`);
+          // console.log(`API Counting for dmSales: ${row}`);
         }
         return isDM;
       })
